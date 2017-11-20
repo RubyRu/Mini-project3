@@ -1,0 +1,50 @@
+---
+title: "mini3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("mdsr")
+install.packages("RMySQL")
+```
+```{r}
+library(mdsr)
+library(RMySQL)
+db <- dbConnect_scidb(dbname = "imdb")
+```
+
+```{r}
+movie_genre <- db %>%
+  dbGetQuery("SELECT  DISTINCT t.id, t.title, t.production_year,  mi.info_type_id, t. kind_id, mi.info
+FROM movie_info mi
+JOIN title t ON mi.movie_id = t.id
+WHERE mi. info_type_id = 3
+AND kind_id = 1")
+```
+
+```{r}
+sum_movie <- db %>%
+  dbGetQuery("SELECT   t.id, t.title, t.production_year,  mi.info_type_id, t. kind_id, mi.info, SUM(t.kind_id) AS Number_sum
+FROM movie_info mi
+JOIN title t ON mi.movie_id = t.id
+WHERE mi. info_type_id = 3
+AND kind_id = 1
+GROUP BY t.id")
+```
+
+```{r}
+sum_movie_2 <- sum_movie %>%
+  select(id, title, production_year, Number_sum) %>%
+  group_by(production_year) %>%
+  summarize(a = sum(Number_sum == 1),
+            b = sum(Number_sum == 2),
+            c = sum(Number_sum >= 3),
+            id = max(id),
+            title = max(title))
+```
+
+
