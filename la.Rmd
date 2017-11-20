@@ -36,15 +36,3 @@ AND kind_id = 1
 GROUP BY t.id")
 ```
 
-```{r}
-sum_movie_2 <- sum_movie %>%
-  select(id, title, production_year, Number_sum) %>%
-  group_by(production_year) %>%
-  summarize(a = sum(Number_sum == 1),
-            b = sum(Number_sum == 2),
-            c = sum(Number_sum >= 3),
-            id = max(id),
-            title = max(title))
-```
-
-
