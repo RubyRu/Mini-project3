@@ -36,3 +36,37 @@ AND kind_id = 1
 GROUP BY t.id")
 ```
 
+```{r}
+sum_movie_2 <- sum_movie %>%
+  select(id, title, production_year, Number_sum) %>%
+  group_by(production_year) %>%
+  summarize(a = sum(Number_sum == 1),
+            b = sum(Number_sum == 2),
+            c = sum(Number_sum >= 3),
+            id = max(id),
+            title = max(title))
+```
+
+```{r}
+sum_movie_3 <- sum_movie %>%
+  select(id, title, production_year, Number_sum) %>%
+  group_by(production_year) %>%
+  summarize(a = sum(Number_sum == 1),
+            b = sum(Number_sum >= 2),
+            id = max(id),
+            title = max(title))
+```
+
+```{r}
+genre_USA <- db %>%
+  dbGetQuery("SELECT t.production_year, t.id, mi1. info, mi2. info_type_id, mi2. info, mi1.info_type_id, SUM(t.kind_id)
+FROM title t
+JOIN movie_info mi1 ON t.id = mi1.movie_id
+JOIN movie_info mi2 ON t.id = mi2.movie_id
+WHERE t.kind_id = 1
+AND mi1. info_type_id = 3
+AND mi2.info_type_id = 8 
+AND mi2.info LIKE 'USA'
+GROUP BY t. production_year;")
+```
+
